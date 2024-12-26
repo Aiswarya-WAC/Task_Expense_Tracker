@@ -2,6 +2,7 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import Transaction
+
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -52,12 +53,12 @@ class LoginView(View):
             # next_page = request.GET.get('next')  # Check if there's a 'next' parameter
             # if next_page:
             #     return redirect(next_page)  # Redirect to the next page if available
-            return HttpResponse("<script>alert('Login Successful!'); window.location='/home'</script>")  # Redirect to home page
+            return HttpResponse("<script>alert('Login Successful!'); window.location='/add'</script>")  # Redirect to home page
         else:
             return HttpResponse("<script>alert('Invalid username or password'); window.location='/login#m'</script>")
 
 
-class HomeView(LoginRequiredMixin, View):  # Restrict access to authenticated users
+class HomeView(LoginRequiredMixin, View):  
     def get(self, request):
         return render(request, 'home.html')
     
@@ -66,17 +67,17 @@ class TransactionListView(ListView):
     template_name = 'transaction_list.html'
     context_object_name = 'transactions'
 
-class TransactionCreateView(View):
+class TransactionCreateView(CreateView):
     def get(self, request):
         return render(request, 'transaction_form.html')
 
     def post(self, request):
         transaction_type = request.POST.get('transaction_type')
-        amount = request.POST.get('amount')
+        amount = request.POST.get('amount_no')
+        print("amount=",amount)
         category = request.POST.get('category')
         date = request.POST.get('date')
 
-      
         transaction = Transaction.objects.create(
             transaction_type=transaction_type,
             amount=amount,
